@@ -6,7 +6,9 @@ Rails.application.routes.draw do
 
   # Projects
   get "projects/archived", to: "projects#archived", as: :archived_projects
-  resources :projects
+  resources :projects do
+    resources :tasks
+  end
 
   # Health check endpoint for uptime monitoring
   get "up" => "rails/health#show", as: :rails_health_check
