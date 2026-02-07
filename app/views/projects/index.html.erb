@@ -1,0 +1,52 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title) { "Projects - TaskFlow" } %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Projects</h1>
+  <%= link_to "New Project", new_project_path, class: "btn btn-primary" %>
+</div>
+
+<%= form_with url: projects_path, method: :get, local: true, class: "mb-4" do |f| %>
+  <div class="input-group">
+    <%= f.search_field :q, value: params[:q], placeholder: "Search projects by name...", class: "form-control" %>
+    <%= f.submit "Search", class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
+
+<% if @projects.any? %>
+  <div class="list-group">
+    <% @projects.each do |project| %>
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="mb-1">
+              <%= link_to project.name, project_path(project) %>
+              <span class="badge bg-<%= project.active? ? 'success' : project.archived? ? 'secondary' : 'info' %>">
+                <%= project.status.humanize %>
+              </span>
+            </h5>
+            <% if project.description.present? %>
+              <p class="mb-1 text-muted"><%= truncate(project.description, length: 150) %></p>
+            <% end %>
+            <small class="text-muted">
+              Created by <%= project.user.display_name %> &middot;
+              Updated <%= time_ago_in_words(project.updated_at) %> ago
+            </small>
+          </div>
+          <div>
+            <% if policy(project).update? %>
+              <%= link_to "Edit", edit_project_path(project), class: "btn btn-sm btn-outline-secondary" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "pagination" %>
+<% else %>
+  <div class="text-center py-5">
+    <p class="text-muted">No projects found.</p>
+    <%= link_to "Create your first project", new_project_path, class: "btn btn-primary" %>
+  </div>
+<% end %>
