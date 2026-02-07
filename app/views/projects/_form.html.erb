@@ -1,0 +1,43 @@
+<%# SPDX-License-Identifier: MIT %>
+<%= form_with(model: project, class: "needs-validation") do |f| %>
+  <% if project.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h5>
+      <ul class="mb-0">
+        <% project.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :name, class: "form-label" %>
+    <%= f.text_field :name, class: "form-control #{'is-invalid' if project.errors[:name].any?}",
+          placeholder: "Enter project name" %>
+    <% if project.errors[:name].any? %>
+      <div class="invalid-feedback"><%= project.errors[:name].first %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :description, class: "form-label" %>
+    <%= f.text_area :description, class: "form-control #{'is-invalid' if project.errors[:description].any?}",
+          rows: 5, placeholder: "Describe your project (optional)" %>
+    <% if project.errors[:description].any? %>
+      <div class="invalid-feedback"><%= project.errors[:description].first %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :status, class: "form-label" %>
+    <%= f.select :status, Project.statuses.keys.map { |s| [s.humanize, s] },
+          {}, class: "form-select" %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", project.persisted? ? project_path(project) : projects_path,
+          class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

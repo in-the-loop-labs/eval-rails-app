@@ -1,0 +1,50 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title) { "#{@project.name} - TaskFlow" } %>
+
+<div class="mb-4">
+  <%= link_to "&larr; Back to Projects".html_safe, projects_path, class: "text-decoration-none" %>
+</div>
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+  <div>
+    <h1>
+      <%= @project.name %>
+      <span class="badge bg-<%= @project.active? ? 'success' : @project.archived? ? 'secondary' : 'info' %>">
+        <%= @project.status.humanize %>
+      </span>
+    </h1>
+    <p class="text-muted">
+      Created by <%= @project.user.display_name %> &middot;
+      Last updated <%= time_ago_in_words(@project.updated_at) %> ago
+    </p>
+  </div>
+
+  <% if policy(@project).update? %>
+    <div class="btn-group">
+      <%= link_to "Edit", edit_project_path(@project), class: "btn btn-outline-secondary" %>
+      <% if policy(@project).destroy? %>
+        <%= button_to "Delete", project_path(@project), method: :delete,
+              class: "btn btn-outline-danger",
+              data: { turbo_confirm: "Are you sure you want to delete this project?" } %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<% if @project.description.present? %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Description</h5>
+      <p class="card-text"><%= simple_format(@project.description) %></p>
+    </div>
+  </div>
+<% end %>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Tasks</h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">No tasks yet. Tasks will be available in a future update.</p>
+  </div>
+</div>

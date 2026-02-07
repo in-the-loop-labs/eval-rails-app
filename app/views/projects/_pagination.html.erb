@@ -1,0 +1,23 @@
+<%# SPDX-License-Identifier: MIT %>
+<% if @total_pages > 1 %>
+  <nav aria-label="Project pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+      <li class="page-item <%= 'disabled' if @page <= 1 %>">
+        <%= link_to "Previous", url_for(page: @page - 1, per_page: @per_page, q: params[:q]),
+              class: "page-link" %>
+      </li>
+
+      <% (1..@total_pages).each do |page_num| %>
+        <li class="page-item <%= 'active' if page_num == @page %>">
+          <%= link_to page_num, url_for(page: page_num, per_page: @per_page, q: params[:q]),
+                class: "page-link" %>
+        </li>
+      <% end %>
+
+      <li class="page-item <%= 'disabled' if @page >= @total_pages %>">
+        <%= link_to "Next", url_for(page: @page + 1, per_page: @per_page, q: params[:q]),
+              class: "page-link" %>
+      </li>
+    </ul>
+  </nav>
+<% end %>
