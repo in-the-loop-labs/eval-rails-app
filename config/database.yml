@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: MIT
+#
+# PostgreSQL configuration for TaskFlow.
+# See: https://guides.rubyonrails.org/configuring.html#configuring-a-database
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: taskflow_development
+
+test:
+  <<: *default
+  database: taskflow_test
+
+production:
+  <<: *default
+  database: taskflow_production
+  username: taskflow
+  password: <%= ENV["TASKFLOW_DATABASE_PASSWORD"] %>
