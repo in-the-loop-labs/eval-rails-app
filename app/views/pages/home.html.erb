@@ -1,0 +1,19 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title, "TaskFlow — Team Task Tracker") %>
+
+<section class="hero">
+  <h1>Welcome to TaskFlow</h1>
+  <p>Organize your team's work into projects and tasks. Track progress, assign
+     responsibilities, and ship with confidence.</p>
+
+  <% if user_signed_in? %>
+    <p>
+      <%= link_to "Go to Dashboard", root_path, class: "btn btn-primary" %>
+    </p>
+  <% else %>
+    <p>
+      <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary" %>
+      <%= link_to "Sign In", new_user_session_path, class: "btn btn-secondary" %>
+    </p>
+  <% end %>
+</section>

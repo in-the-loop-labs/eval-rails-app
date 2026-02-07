@@ -1,0 +1,18 @@
+<%# SPDX-License-Identifier: MIT %>
+<nav class="navbar">
+  <div class="navbar-brand">
+    <%= link_to "TaskFlow", root_path %>
+  </div>
+
+  <div class="navbar-menu">
+    <% if user_signed_in? %>
+      <span class="navbar-item">
+        <%= current_user.display_name %>
+      </span>
+      <%= link_to "Sign Out", destroy_user_session_path, data: { turbo_method: :delete }, class: "navbar-item" %>
+    <% else %>
+      <%= link_to "Sign In", new_user_session_path, class: "navbar-item" %>
+      <%= link_to "Sign Up", new_user_registration_path, class: "navbar-item" %>
+    <% end %>
+  </div>
+</nav>
