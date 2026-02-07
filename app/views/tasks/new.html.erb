@@ -1,0 +1,14 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title) { "New Task - #{@project.name} - TaskFlow" } %>
+
+<div class="mb-4">
+  <%= link_to "&larr; Back to Tasks".html_safe, project_tasks_path(@project), class: "text-decoration-none" %>
+</div>
+
+<h1 class="mb-4">New Task</h1>
+
+<div class="row">
+  <div class="col-md-8">
+    <%= render "form", task: @task, project: @project %>
+  </div>
+</div>

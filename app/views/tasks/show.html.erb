@@ -1,0 +1,85 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title) { "#{@task.title} - #{@project.name} - TaskFlow" } %>
+
+<div class="mb-4">
+  <%= link_to "&larr; Back to Tasks".html_safe, project_tasks_path(@project), class: "text-decoration-none" %>
+</div>
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+  <div>
+    <h1>
+      <%= @task.title %>
+      <span class="badge bg-<%= @task.completed? ? 'success' : @task.in_progress? ? 'primary' : @task.cancelled? ? 'secondary' : 'warning' %>">
+        <%= @task.status.humanize %>
+      </span>
+      <span class="badge bg-<%= @task.urgent? ? 'danger' : @task.high? ? 'warning' : @task.medium? ? 'info' : 'light text-dark' %>">
+        <%= @task.priority.humanize %>
+      </span>
+    </h1>
+    <p class="text-muted">
+      In project <%= link_to @project.name, project_path(@project) %> &middot;
+      Created <%= time_ago_in_words(@task.created_at) %> ago
+    </p>
+  </div>
+
+  <div class="btn-group">
+    <% if policy(@task).update? %>
+      <%= link_to "Edit", edit_project_task_path(@project, @task), class: "btn btn-outline-secondary" %>
+    <% end %>
+    <% if policy(@task).destroy? %>
+      <%= button_to "Delete", project_task_path(@project, @task), method: :delete,
+            class: "btn btn-outline-danger",
+            data: { turbo_confirm: "Are you sure you want to delete this task?" } %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <% if @task.description.present? %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Description</h5>
+          <p class="card-text"><%= simple_format(@task.description) %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Details</h5>
+        <dl class="mb-0">
+          <dt>Assignee</dt>
+          <dd><%= @task.user&.name || "Unassigned" %></dd>
+
+          <dt>Priority</dt>
+          <dd>
+            <span class="badge bg-<%= @task.urgent? ? 'danger' : @task.high? ? 'warning' : @task.medium? ? 'info' : 'light text-dark' %>">
+              <%= @task.priority.humanize %>
+            </span>
+          </dd>
+
+          <dt>Status</dt>
+          <dd>
+            <span class="badge bg-<%= @task.completed? ? 'success' : @task.in_progress? ? 'primary' : @task.cancelled? ? 'secondary' : 'warning' %>">
+              <%= @task.status.humanize %>
+            </span>
+          </dd>
+
+          <% if @task.due_date.present? %>
+            <dt>Due Date</dt>
+            <dd>
+              <% if @task.due_date < Date.current && !@task.completed? %>
+                <span class="text-danger"><%= @task.due_date.strftime("%B %d, %Y") %> (Overdue)</span>
+              <% else %>
+                <%= @task.due_date.strftime("%B %d, %Y") %>
+              <% end %>
+            </dd>
+          <% end %>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

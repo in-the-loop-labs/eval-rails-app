@@ -1,0 +1,53 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title) { "Tasks - #{@project.name} - TaskFlow" } %>
+
+<div class="mb-4">
+  <%= link_to "&larr; Back to Project".html_safe, project_path(@project), class: "text-decoration-none" %>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Tasks for <%= @project.name %></h1>
+  <%= link_to "New Task", new_project_task_path(@project), class: "btn btn-primary" %>
+</div>
+
+<% if @tasks.any? %>
+  <div class="list-group">
+    <% @tasks.each do |task| %>
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="mb-1">
+              <%= link_to task.title, project_task_path(@project, task) %>
+              <span class="badge bg-<%= task.completed? ? 'success' : task.in_progress? ? 'primary' : task.cancelled? ? 'secondary' : 'warning' %>">
+                <%= task.status.humanize %>
+              </span>
+              <span class="badge bg-<%= task.urgent? ? 'danger' : task.high? ? 'warning' : task.medium? ? 'info' : 'light text-dark' %>">
+                <%= task.priority.humanize %>
+              </span>
+            </h5>
+            <% if task.description.present? %>
+              <p class="mb-1 text-muted"><%= truncate(task.description, length: 120) %></p>
+            <% end %>
+            <small class="text-muted">
+              Assigned to <%= task.user&.name || "Unassigned" %> &middot;
+              <% if task.due_date.present? %>
+                Due <%= task.due_date.strftime("%b %d, %Y") %> &middot;
+              <% end %>
+              Created <%= time_ago_in_words(task.created_at) %> ago
+            </small>
+          </div>
+          <div>
+            <% if policy(task).update? %>
+              <%= link_to "Edit", edit_project_task_path(@project, task), class: "btn btn-sm btn-outline-secondary" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="text-center py-5">
+    <p class="text-muted">No tasks yet.</p>
+    <%= link_to "Create the first task", new_project_task_path(@project), class: "btn btn-primary" %>
+  </div>
+<% end %>
