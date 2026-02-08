@@ -4,14 +4,15 @@
 module Api
   module V1
     class CommentsController < ApplicationController
-      skip_before_action :verify_authenticity_token
+      include ApiResponder
+
       before_action :set_task
       before_action :set_comment, only: [:update, :destroy]
 
       # No authorization check — any authenticated user can see any task's comments
       def index
         comments = @task.comments.includes(:user).oldest_first
-        render json: comments.map { |c| serialize_comment(c) }
+        render_success(comments.map { |c| serialize_comment(c) })
       end
 
       def create
@@ -21,9 +22,9 @@ module Api
         if comment.save
           # Send notification to task owner and project owner
           TaskNotificationJob.perform_later(@task.id, "commented", current_user.id)
-          render json: serialize_comment(comment), status: :created
+          render_created(serialize_comment(comment))
         else
-          render json: { errors: comment.errors.full_messages }, status: :unprocessable_entity
+          render_errors(comment)
         end
       end
 
@@ -31,9 +32,9 @@ module Api
         authorize @comment
 
         if @comment.update(comment_params)
-          render json: serialize_comment(@comment)
+          render_success(serialize_comment(@comment))
         else
-          render json: { errors: @comment.errors.full_messages }, status: :unprocessable_entity
+          render_errors(@comment)
         end
       end
 
