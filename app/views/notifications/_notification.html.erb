@@ -1,0 +1,19 @@
+<%# SPDX-License-Identifier: MIT %>
+<div class="notification <%= 'unread' unless notification.read %>" id="notification_<%= notification.id %>">
+  <div class="notification-icon">
+    <% case notification.action %>
+    <% when "assigned" %>
+      <span class="icon">&#x1F4CB;</span>
+    <% when "status_changed" %>
+      <span class="icon">&#x1F504;</span>
+    <% when "commented" %>
+      <span class="icon">&#x1F4AC;</span>
+    <% when "due_date_reminder" %>
+      <span class="icon">&#x23F0;</span>
+    <% end %>
+  </div>
+  <div class="notification-content">
+    <p class="notification-message"><%= notification.message %></p>
+    <span class="notification-time"><%= time_ago_in_words(notification.created_at) %> ago</span>
+  </div>
+</div>
