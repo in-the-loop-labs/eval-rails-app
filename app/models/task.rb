@@ -2,6 +2,9 @@
 # frozen_string_literal: true
 
 class Task < ApplicationRecord
+  include Searchable
+  include Filterable
+
   belongs_to :project
   belongs_to :user, optional: true
 
@@ -18,6 +21,9 @@ class Task < ApplicationRecord
   validates :priority, presence: true
   validates :description, length: { maximum: 5000 }, allow_blank: true
 
+  # Search configuration
+  searchable_fields :title, :description
+
   # Scopes
   scope :by_status, ->(status) { where(status: status) }
   scope :by_priority, ->(priority) { where(priority: priority) }
@@ -26,12 +32,6 @@ class Task < ApplicationRecord
   scope :unassigned, -> { where(user_id: nil) }
   scope :assigned_to, ->(user) { where(user: user) }
   scope :recently_created, -> { order(created_at: :desc) }
-  scope :search, ->(query) {
-    where("title ILIKE :q OR description ILIKE :q", q: "%#{query}%")
-  }
-  scope :by_status_text, ->(status_text) {
-    where("status::text = ?", status_text)
-  }
 
   # Callbacks
   after_save :enqueue_notification

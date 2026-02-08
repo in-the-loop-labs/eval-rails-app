@@ -2,21 +2,17 @@
 # frozen_string_literal: true
 
 class ProjectsController < ApplicationController
+  include Paginatable
+
   before_action :set_project, only: %i[show edit update destroy]
 
   def index
     authorize Project
 
-    @per_page = (params[:per_page] || 10).to_i
-    @page = (params[:page] || 1).to_i
-    @page = 1 if @page < 1
-
     scope = policy_scope(Project).recently_updated
-    scope = scope.search_by_name(params[:q]) if params[:q].present?
+    scope = scope.search(params[:q]) if params[:q].present?
 
-    total_count = scope.count
-    @total_pages = (total_count.to_f / @per_page).ceil
-    @projects = scope.offset((@page - 1) * @per_page).limit(@per_page)
+    @projects = paginate(scope, per_page: params[:per_page] || 10)
   end
 
   def show
@@ -63,14 +59,8 @@ class ProjectsController < ApplicationController
   def archived
     authorize Project, :index?
 
-    @per_page = (params[:per_page] || 10).to_i
-    @page = (params[:page] || 1).to_i
-    @page = 1 if @page < 1
-
     scope = policy_scope(Project).archived.recently_updated
-    total_count = scope.count
-    @total_pages = (total_count.to_f / @per_page).ceil
-    @projects = scope.offset((@page - 1) * @per_page).limit(@per_page)
+    @projects = paginate(scope, per_page: params[:per_page] || 10)
 
     render :index
   end

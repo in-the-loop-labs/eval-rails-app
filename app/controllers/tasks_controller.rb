@@ -9,19 +9,8 @@ class TasksController < ApplicationController
     authorize Task
 
     @tasks = @project.tasks
-
-    if params[:q].present?
-      @tasks = @tasks.search(params[:q])
-    end
-
-    if params[:status_filter].present?
-      @tasks = @tasks.where(status: params[:status_filter])
-    end
-
-    if params[:priority].present?
-      @tasks = @tasks.where(priority: params[:priority])
-    end
-
+    @tasks = @tasks.search(params[:q]) if params[:q].present?
+    @tasks = @tasks.filter_by(filter_params)
     @tasks = @tasks.includes(:project, :user, :notifications)
     @tasks = @tasks.order(created_at: :desc)
   end
@@ -127,5 +116,9 @@ class TasksController < ApplicationController
 
   def task_params
     params.require(:task).permit(:title, :description, :status, :priority, :due_date, :user_id, :project_id, :admin)
+  end
+
+  def filter_params
+    { status: params[:status_filter], priority: params[:priority] }
   end
 end
