@@ -1,0 +1,19 @@
+<%# SPDX-License-Identifier: MIT %>
+<% content_for(:title) { "Edit Comment - TaskFlow" } %>
+
+<div class="mb-4">
+  <%= link_to "&larr; Back to Task".html_safe, project_task_path(@project, @task), class: "text-decoration-none" %>
+</div>
+
+<h2>Edit Comment</h2>
+
+<%= form_with(model: [@project, @task, @comment], local: true) do |f| %>
+  <div class="mb-3">
+    <%= f.label :body, "Comment", class: "form-label" %>
+    <%= f.text_area :body, class: "form-control", rows: 5 %>
+  </div>
+  <div>
+    <%= f.submit "Update Comment", class: "btn btn-primary" %>
+    <%= link_to "Cancel", project_task_path(@project, @task), class: "btn btn-outline-secondary ms-2" %>
+  </div>
+<% end %>
