@@ -10,6 +10,15 @@ Rails.application.routes.draw do
     resources :tasks
   end
 
+  # API endpoints
+  namespace :api do
+    namespace :v1 do
+      resources :projects, only: [] do
+        resources :tasks
+      end
+    end
+  end
+
   # Health check endpoint for uptime monitoring
   get "up" => "rails/health#show", as: :rails_health_check
 
