@@ -22,4 +22,19 @@ class Task < ApplicationRecord
   scope :unassigned, -> { where(user_id: nil) }
   scope :assigned_to, ->(user) { where(user: user) }
   scope :recently_created, -> { order(created_at: :desc) }
+
+  # Callbacks
+  after_save :enqueue_notification
+
+  private
+
+  def enqueue_notification
+    if saved_change_to_user_id? && user_id.present?
+      TaskNotificationJob.perform_later(id, "assigned", project.user_id)
+    end
+
+    if saved_change_to_status?
+      TaskNotificationJob.perform_later(id, "status_changed", user_id || project.user_id)
+    end
+  end
 end
