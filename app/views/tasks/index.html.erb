@@ -10,6 +10,25 @@
   <%= link_to "New Task", new_project_task_path(@project), class: "btn btn-primary" %>
 </div>
 
+<div class="card mb-4">
+  <div class="card-body">
+    <%= form_tag project_tasks_path(@project), method: :get, class: "row g-3" do %>
+      <div class="col-md-4">
+        <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search tasks..." %>
+      </div>
+      <div class="col-md-3">
+        <%= select_tag :status_filter, options_for_select(Task.statuses.keys.map { |s| [s.humanize, s] }, params[:status_filter]), prompt: "All Statuses", class: "form-select" %>
+      </div>
+      <div class="col-md-3">
+        <%= select_tag :priority, options_for_select(Task.priorities.keys.map { |p| [p.humanize, p] }, params[:priority]), prompt: "All Priorities", class: "form-select" %>
+      </div>
+      <div class="col-md-2">
+        <%= submit_tag "Search", class: "btn btn-outline-primary w-100" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
 <% if @tasks.any? %>
   <div class="list-group">
     <% @tasks.each do |task| %>

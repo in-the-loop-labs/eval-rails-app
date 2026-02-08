@@ -12,6 +12,7 @@ RSpec.describe Task do
   end
 
   describe "validations" do
+    it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:status) }
     it { is_expected.to validate_presence_of(:priority) }
     it { is_expected.to validate_length_of(:description).is_at_most(5000) }
@@ -87,6 +88,22 @@ RSpec.describe Task do
         new_task = create(:task, project: project, created_at: 1.hour.ago)
 
         expect(described_class.recently_created).to eq([new_task, old_task])
+      end
+    end
+
+    describe ".search" do
+      it "returns tasks matching the query in title" do
+        matching = create(:task, project: project, title: "Fix login bug")
+        create(:task, project: project, title: "Add feature")
+
+        expect(described_class.search("login")).to include(matching)
+      end
+
+      it "returns tasks matching the query in description" do
+        matching = create(:task, project: project, description: "The authentication flow is broken")
+        create(:task, project: project, description: "Unrelated task")
+
+        expect(described_class.search("authentication")).to include(matching)
       end
     end
   end

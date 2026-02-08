@@ -15,7 +15,7 @@ class ProjectsController < ApplicationController
     scope = scope.search_by_name(params[:q]) if params[:q].present?
 
     total_count = scope.count
-    @total_pages = total_count / @per_page
+    @total_pages = (total_count.to_f / @per_page).ceil
     @projects = scope.offset((@page - 1) * @per_page).limit(@per_page)
   end
 
@@ -69,7 +69,7 @@ class ProjectsController < ApplicationController
 
     scope = policy_scope(Project).archived.recently_updated
     total_count = scope.count
-    @total_pages = total_count / @per_page
+    @total_pages = (total_count.to_f / @per_page).ceil
     @projects = scope.offset((@page - 1) * @per_page).limit(@per_page)
 
     render :index

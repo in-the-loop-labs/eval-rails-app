@@ -9,7 +9,10 @@ class Task < ApplicationRecord
   enum status: { pending: 0, in_progress: 1, completed: 2, cancelled: 3 }
   enum priority: { low: 0, medium: 1, high: 2, urgent: 3 }
 
+  has_many :notifications, dependent: :destroy
+
   # Validations
+  validates :title, presence: true
   validates :status, presence: true
   validates :priority, presence: true
   validates :description, length: { maximum: 5000 }, allow_blank: true
@@ -22,6 +25,12 @@ class Task < ApplicationRecord
   scope :unassigned, -> { where(user_id: nil) }
   scope :assigned_to, ->(user) { where(user: user) }
   scope :recently_created, -> { order(created_at: :desc) }
+  scope :search, ->(query) {
+    where("title ILIKE :q OR description ILIKE :q", q: "%#{query}%")
+  }
+  scope :by_status_text, ->(status_text) {
+    where("status::text = ?", status_text)
+  }
 
   # Callbacks
   after_save :enqueue_notification
