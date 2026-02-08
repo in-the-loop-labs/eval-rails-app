@@ -1,0 +1,126 @@
+<%# SPDX-License-Identifier: MIT %>
+<div class="container mt-4">
+  <h1>Dashboard</h1>
+
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Total Tasks</h5>
+          <h2><%= @total_tasks %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Completed</h5>
+          <h2 class="text-success"><%= @completed_tasks %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">In Progress</h5>
+          <h2 class="text-primary"><%= @in_progress_tasks %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Completion Rate</h5>
+          <h2><%= @completion_rate %>%</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Priority breakdown %>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Tasks by Priority</div>
+        <div class="card-body">
+          <table class="table">
+            <tbody>
+              <% @tasks_by_priority.each do |priority, count| %>
+                <tr>
+                  <td><span class="badge bg-<%= priority_badge_color(priority) %>"><%= priority.to_s.capitalize %></span></td>
+                  <td><%= count %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">This Week</div>
+        <div class="card-body">
+          <p>Tasks completed: <strong><%= @tasks_completed_this_week %></strong></p>
+          <p>Tasks created (last 30 days): <strong><%= @tasks_created_last_month %></strong></p>
+          <p>Overdue tasks: <strong class="text-danger"><%= @overdue_tasks.size %></strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Project breakdown table %>
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">Project Breakdown</div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Total Tasks</th>
+                <th>Completed</th>
+                <th>Completion Rate</th>
+                <th>Overdue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @project_stats.each do |stats| %>
+                <tr>
+                  <td><%= link_to stats[:project].name, project_path(stats[:project]) %></td>
+                  <td><%= stats[:total_tasks] %></td>
+                  <td><%= stats[:completed_tasks] %></td>
+                  <td><%= stats[:completion_rate] %>%</td>
+                  <td><%= stats[:overdue_count] > 0 ? content_tag(:span, stats[:overdue_count], class: "text-danger") : 0 %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Recent activity %>
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">Recent Activity</div>
+        <div class="card-body">
+          <% @recent_activity.each do |task| %>
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <div>
+                <%= link_to task.title, project_task_path(task.project, task) %>
+                <small class="text-muted ms-2">in <%= task.project.name %></small>
+              </div>
+              <small class="text-muted">
+                <%= task.updated_at.to_date %>
+              </small>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
