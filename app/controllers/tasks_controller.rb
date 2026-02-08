@@ -28,6 +28,7 @@ class TasksController < ApplicationController
 
   def show
     authorize @task
+    @comments = @task.comments.includes(:user).oldest_first
   end
 
   def new

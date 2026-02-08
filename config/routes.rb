@@ -7,14 +7,18 @@ Rails.application.routes.draw do
   # Projects
   get "projects/archived", to: "projects#archived", as: :archived_projects
   resources :projects do
-    resources :tasks
+    resources :tasks do
+      resources :comments, only: [:create, :edit, :update, :destroy]
+    end
   end
 
   # API endpoints
   namespace :api do
     namespace :v1 do
       resources :projects, only: [] do
-        resources :tasks
+        resources :tasks do
+          resources :comments, only: [:index, :create, :update, :destroy]
+        end
       end
     end
   end

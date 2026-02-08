@@ -10,6 +10,7 @@ class Task < ApplicationRecord
   enum priority: { low: 0, medium: 1, high: 2, urgent: 3 }
 
   has_many :notifications, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   # Validations
   validates :title, presence: true

@@ -1,0 +1,10 @@
+<%# SPDX-License-Identifier: MIT %>
+<%= form_with(model: [@project, @task, Comment.new], local: true) do |f| %>
+  <div class="mb-3">
+    <%= f.label :body, "Comment", class: "form-label" %>
+    <%= f.text_area :body, class: "form-control", rows: 3, placeholder: "Write a comment..." %>
+  </div>
+  <div>
+    <%= f.submit "Add Comment", class: "btn btn-primary" %>
+  </div>
+<% end %>

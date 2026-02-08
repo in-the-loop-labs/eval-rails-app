@@ -10,6 +10,7 @@ class User < ApplicationRecord
   # Associations
   has_many :projects, dependent: :destroy
   has_many :assigned_tasks, class_name: "Task", dependent: :nullify
+  has_many :comments, dependent: :destroy
 
   # Validations
   validates :name, presence: true, length: { maximum: 100 }
