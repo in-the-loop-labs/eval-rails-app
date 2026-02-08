@@ -8,7 +8,22 @@ class TasksController < ApplicationController
   def index
     authorize Task
 
-    @tasks = @project.tasks.order(created_at: :desc)
+    @tasks = @project.tasks
+
+    if params[:q].present?
+      @tasks = @tasks.search(params[:q])
+    end
+
+    if params[:status_filter].present?
+      @tasks = @tasks.where(status: params[:status_filter])
+    end
+
+    if params[:priority].present?
+      @tasks = @tasks.where(priority: params[:priority])
+    end
+
+    @tasks = @tasks.includes(:project, :user, :notifications)
+    @tasks = @tasks.order(created_at: :desc)
   end
 
   def show
