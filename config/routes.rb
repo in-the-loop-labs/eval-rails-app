@@ -26,6 +26,9 @@ Rails.application.routes.draw do
   # Health check endpoint for uptime monitoring
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Dashboard
+  get "dashboard", to: "dashboard#index"
+
   # Root route
   root "pages#home"
 end

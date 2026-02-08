@@ -6,6 +6,7 @@
 
   <div class="navbar-menu">
     <% if user_signed_in? %>
+      <%= link_to "Dashboard", dashboard_path, class: "navbar-item" %>
       <span class="navbar-item">
         <%= current_user.display_name %>
       </span>
